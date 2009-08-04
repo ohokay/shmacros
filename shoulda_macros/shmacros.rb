@@ -106,6 +106,27 @@ module Shmacros
     end
     
     ##
+    #  Asserts that model has act_as_tagger
+    #
+    #    should_act_as_tagger
+    #
+    def should_act_as_tagger
+      klass = self.name.gsub(/Test$/, '').constantize
+
+      should "include ActAsTagger methods" do
+        assert klass.include?(ActiveRecord::Acts::Tagger::InstanceMethods)
+      end
+      
+      should "be a tagger" do
+        tagger = klass.new
+        assert tagger.is_tagger?
+      end
+
+      should_have_many :owned_taggings
+      should_have_many :owned_tags
+    end
+
+    ##
     #  Asserts that model klass is_a?(Foo) or is_a?(Bar)
     #
     #    should_be Foo, Bar
