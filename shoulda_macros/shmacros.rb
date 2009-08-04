@@ -90,19 +90,19 @@ module Shmacros
     ##
     #  Asserts that model has act_as_taggable_on defined for certain categories.
     #
-    #    should_act_as_taggable_on :category_name
-    #    (default :category_name is :tags)
+    #    should_act_as_taggable_on :category_name, :category_name_2
     #
-    def should_act_as_taggable_on(category = :tags)
+    def should_act_as_taggable_on(*categories)
       klass = self.name.gsub(/Test$/, '').constantize
 
-      should "include ActAsTaggableOn #{':' + category.to_s} methods" do
+      should "include ActAsTaggableOn methods" do
         assert klass.extended_by.include?(ActiveRecord::Acts::TaggableOn::ClassMethods)
         assert klass.extended_by.include?(ActiveRecord::Acts::TaggableOn::SingletonMethods)
         assert klass.include?(ActiveRecord::Acts::TaggableOn::InstanceMethods)
       end
-
-      should_have_many :taggings, category
+      
+      should_have_many :taggings
+      categories.each { |c| should_have_many "#{c.to_s.singularize}_taggings".to_sym }
     end
     
     ##
